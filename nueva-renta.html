@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nueva Renta - ALS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Estilo oscuro tipo AppSheet */
+        body { background-color: #1f1f1f; color: #e0e0e0; }
+        input, select, textarea { background-color: #2d2d2d !important; border-color: #444 !important; color: white !important; }
+        input:focus, select:focus { border-color: #e91e63 !important; outline: none; }
+        
+        /* Scrollbar oculto para listas limpias */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #444; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen pb-20 font-sans">
+
+    <header class="bg-[#2d2d2d] p-4 shadow-md flex items-center gap-4 sticky top-0 z-50 border-b border-gray-700">
+        <a href="admin.html" class="text-gray-400 hover:text-pink-500">
+            <span class="material-icons">close</span>
+        </a>
+        <h1 class="text-xl font-bold">Nueva Renta</h1>
+        <button type="submit" form="form-renta" class="ml-auto bg-blue-600 px-4 py-1 rounded text-sm font-bold shadow hover:bg-blue-500">Guardar</button>
+    </header>
+
+    <main class="p-6 max-w-lg mx-auto">
+        <form id="form-renta" class="space-y-6">
+            
+            <div>
+                <label class="text-xs text-gray-400">ID_Renta*</label>
+                <input type="text" id="id_renta" name="id_renta" readonly 
+                    class="w-full p-2 mt-1 rounded border font-mono text-gray-300">
+            </div>
+
+            <div class="p-4 border border-gray-600 rounded bg-[#252525] relative">
+                <label class="text-xs text-pink-400 font-bold uppercase mb-2 block">Cliente</label>
+                
+                <div class="flex gap-2">
+                    <div id="cliente-btn" onclick="toggleClienteDropdown()" class="flex-1 p-3 rounded border border-gray-600 bg-[#2d2d2d] flex justify-between items-center cursor-pointer">
+                        <span id="cliente-seleccionado">Buscar o seleccionar cliente...</span>
+                        <span class="material-icons">person_search</span>
+                    </div>
+                    <button type="button" onclick="abrirModalCliente()" class="bg-pink-600 p-3 rounded-lg flex items-center justify-center hover:bg-pink-700 active:scale-95 transition-all">
+                        <span class="material-icons">person_add</span>
+                    </button>
+                </div>
+
+                <div id="cliente-dropdown" class="hidden absolute left-0 right-0 mt-1 bg-[#2d2d2d] border border-gray-600 rounded-xl shadow-2xl z-[110] p-2">
+                    <input type="text" id="input-busqueda-cliente" oninput="filtrarClientes()" placeholder="Escribe para buscar..." class="w-full p-2 mb-2 rounded bg-gray-800 border border-gray-600 text-white text-sm outline-none focus:border-pink-500">
+                    <div id="lista-clientes-sugerencias" class="max-h-60 overflow-y-auto custom-scrollbar"></div>
+                </div>
+                
+                <input type="hidden" id="id_cliente" name="id_cliente">
+                <input type="hidden" id="nombre_cliente" name="nombre_cliente">
+            </div>
+
+            <div class="p-4 border border-gray-600 rounded bg-[#252525] relative">
+                <label class="text-xs text-pink-400 font-bold uppercase mb-2 block">Seleccionar Artículo</label>
+                
+                <div id="dropdown-btn" onclick="toggleDropdown()" class="w-full p-3 rounded border border-gray-600 bg-[#2d2d2d] flex justify-between items-center cursor-pointer">
+                    <span id="selected-text">Toca para elegir...</span>
+                    <span class="material-icons">expand_more</span>
+                </div>
+
+                <div id="dropdown-list" class="hidden absolute left-0 right-0 mt-1 bg-[#2d2d2d] border border-gray-600 rounded-xl shadow-2xl z-[100] max-h-80 overflow-y-auto custom-scrollbar">
+                    <div id="lista-items"></div>
+                </div>
+
+                <input type="hidden" id="id_articulo" name="id_articulo">
+                <input type="hidden" id="nombre_articulo" name="nombre_articulo">
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Fecha_Evento</label>
+                <input type="date" id="fecha_evento" name="fecha_evento" class="w-full p-3 mt-1 rounded border">
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Fecha_Entrega</label>
+                <input type="date" id="fecha_entrega" name="fecha_entrega" class="w-full p-3 mt-1 rounded border">
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Fecha_Retorno</label>
+                <input type="date" id="fecha_retorno" name="fecha_retorno" class="w-full p-3 mt-1 rounded border">
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Total_Renta</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-gray-500">$</span>
+                    <input type="number" id="total" name="total" placeholder="0.00" class="w-full p-3 pl-8 mt-1 rounded border">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Descuento</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-gray-500">$</span>
+                    <input type="number" id="descuento" name="descuento" value="0" class="w-full p-3 pl-8 mt-1 rounded border">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Abono</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-gray-500">$</span>
+                    <input type="number" id="abono" name="abono" value="0" class="w-full p-3 pl-8 mt-1 rounded border">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Saldo_Pendiente</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-gray-500">$</span>
+                    <input type="number" id="saldo" name="saldo" readonly class="w-full p-3 pl-8 mt-1 rounded border bg-[#222] text-red-400 font-bold">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Documento_Garantia</label>
+                <div class="grid grid-cols-4 gap-2 mt-2">
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="garantia" value="INE" class="peer hidden" checked>
+                        <div class="p-2 border border-gray-600 rounded text-xs peer-checked:bg-gray-600 peer-checked:text-white hover:bg-gray-700">INE</div>
+                    </label>
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="garantia" value="VISA" class="peer hidden">
+                        <div class="p-2 border border-gray-600 rounded text-xs peer-checked:bg-gray-600 peer-checked:text-white hover:bg-gray-700">VISA</div>
+                    </label>
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="garantia" value="PASAPORTE" class="peer hidden">
+                        <div class="p-2 border border-gray-600 rounded text-xs peer-checked:bg-gray-600 peer-checked:text-white hover:bg-gray-700">PASAPORTE</div>
+                    </label>
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="garantia" value="LICENCIA" class="peer hidden">
+                        <div class="p-2 border border-gray-600 rounded text-xs peer-checked:bg-gray-600 peer-checked:text-white hover:bg-gray-700">LICENCIA</div>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">Ajustes</label>
+                <textarea id="ajustes" rows="2" class="w-full p-3 mt-1 rounded border" placeholder="Ajustes de costura o notas..."></textarea>
+            </div>
+
+        </form>
+    </main>
+
+    <div id="modal-nuevo-cliente" class="hidden fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-[#1a1a1a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-icons text-pink-500">person_add</span>
+                <h3 class="text-xl font-bold text-white">Registrar Cliente</h3>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] text-gray-400 font-bold uppercase">Nombre Completo</label>
+                    <input type="text" id="nuevo-cliente-nombre" placeholder="Ej. Maria Lopez" class="w-full p-3 rounded-lg bg-[#2d2d2d] border border-gray-600 text-white outline-none focus:border-pink-500">
+                </div>
+                <div>
+                    <label class="text-[10px] text-gray-400 font-bold uppercase">Teléfono (WhatsApp)</label>
+                    <input type="tel" id="nuevo-cliente-tel" placeholder="8112345678" class="w-full p-3 rounded-lg bg-[#2d2d2d] border border-gray-600 text-white outline-none focus:border-pink-500">
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="cerrarModalCliente()" class="flex-1 p-3 rounded-lg text-gray-400 font-bold hover:bg-gray-800">Cancelar</button>
+                    <button type="button" onclick="guardarNuevoCliente()" id="btn-guardar-cliente" class="flex-1 p-3 rounded-lg bg-pink-600 text-white font-bold shadow-lg shadow-pink-900/20">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="nueva-renta.js"></script>
+</body>
+</html>
