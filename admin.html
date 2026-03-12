@@ -89,18 +89,44 @@
         </section>
     </main>
 
-    <div id="modal-editar" class="hidden fixed inset-0 bg-black/60 z-[60] flex items-end sm:items-center justify-center backdrop-blur-sm">
-        <div class="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl">
-            <h2 class="text-xl font-bold text-gray-800" id="modal-titulo">Nombre</h2>
-            <p class="text-gray-500 text-xs mb-6" id="modal-subtitulo">ID...</p>
-            <div class="grid grid-cols-1 gap-3">
-                <button onclick="guardarEstado('Disponible')" class="p-4 rounded-xl border border-green-100 bg-green-50 text-green-700 font-bold flex items-center gap-3"><span class="material-icons">check_circle</span> Disponible</button>
-                <button onclick="guardarEstado('Rentado')" class="p-4 rounded-xl border border-blue-100 bg-blue-50 text-blue-700 font-bold flex items-center gap-3"><span class="material-icons">shopping_bag</span> Rentar</button>
-                <button onclick="guardarEstado('Limpieza')" class="p-4 rounded-xl border border-yellow-100 bg-yellow-50 text-yellow-700 font-bold flex items-center gap-3"><span class="material-icons">local_laundry_service</span> Limpieza</button>
-                <button onclick="cerrarModal()" class="mt-2 py-3 text-gray-400 text-sm font-medium">Cancelar</button>
+<div id="modal-editar" class="hidden fixed inset-0 bg-black/60 z-[60] flex items-end sm:items-center justify-center backdrop-blur-sm">
+    <div class="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl">
+        
+        <h2 class="text-xl font-bold text-gray-800" id="modal-titulo">Nombre del Vestido</h2>
+        <p class="text-gray-500 text-xs mb-4" id="modal-subtitulo">ID...</p>
+
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl mb-5 border border-gray-100 shadow-inner">
+            <div class="flex items-center gap-2">
+                <span class="material-icons text-pink-500 text-base">language</span>
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest leading-none">Visibilidad</span>
+                    <span class="text-[9px] text-gray-400 font-medium">Mostrar en catálogo web</span>
+                </div>
             </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggle-publicado" class="sr-only peer" onchange="cambiarVisibilidadWeb(this.checked)">
+                <div class="w-10 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-pink-600"></div>
+            </label>
+        </div>
+        <div class="grid grid-cols-1 gap-3">
+            <button onclick="guardarEstado('Disponible')" class="p-4 rounded-xl border border-green-100 bg-green-50 text-green-700 font-bold flex items-center gap-3 active:scale-95 transition-transform">
+                <span class="material-icons">check_circle</span> Disponible
+            </button>
+            
+            <button onclick="guardarEstado('Rentado')" class="p-4 rounded-xl border border-blue-100 bg-blue-50 text-blue-700 font-bold flex items-center gap-3 active:scale-95 transition-transform">
+                <span class="material-icons">shopping_bag</span> Rentar
+            </button>
+            
+            <button onclick="guardarEstado('Limpieza')" class="p-4 rounded-xl border border-yellow-100 bg-yellow-50 text-yellow-700 font-bold flex items-center gap-3 active:scale-95 transition-transform">
+                <span class="material-icons">local_laundry_service</span> Limpieza
+            </button>
+            
+            <button onclick="cerrarModal()" class="mt-2 py-3 text-gray-400 text-sm font-medium hover:text-gray-600 transition-colors">
+                Cancelar
+            </button>
         </div>
     </div>
+</div>
     <div id="modal-renta-detalle" class="hidden fixed inset-0 bg-black/80 z-[60] flex items-end sm:items-center justify-center backdrop-blur-sm">
         <div class="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             

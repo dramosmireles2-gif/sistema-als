@@ -491,8 +491,18 @@ function abrirModalInventario(id, nombre, estado) {
     document.getElementById('modal-titulo').innerText = nombre; 
     document.getElementById('modal-subtitulo').innerText = `ID: ${id}`; 
     modalInv.dataset.idActual = id; 
+    
+    // --- NUEVO: LEER ESTADO DE PUBLICACIÓN ---
+    const vestido = datosGlobales.inventario.find(v => v['ID_Articulo'] === id);
+    if (vestido) {
+        // Si el Excel dice "SI", el switch se enciende. Si dice otra cosa o está vacío, se apaga.
+        const estaPublicado = (vestido['Publicado'] || '').trim().toUpperCase() === 'SI';
+        document.getElementById('toggle-publicado').checked = estaPublicado;
+    }
+    // -----------------------------------------
+
     modalInv.classList.remove('hidden'); 
-} 
+}
 
 function cerrarModal() { modalInv.classList.add('hidden'); } 
 
@@ -550,6 +560,41 @@ async function guardarEstado(nuevoEstado) {
             Swal.fire('Error', 'Hubo un problema de conexión con el servidor.', 'error');
         }
     } 
+}
+// --- NUEVA FUNCIÓN: CAMBIAR VISIBILIDAD WEB ---
+async function cambiarVisibilidadWeb(estaActivado) {
+    const id = modalInv.dataset.idActual; 
+    const nuevoEstado = estaActivado ? 'SI' : 'NO';
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true
+    });
+
+    try {
+        await fetch(`${urlAPI}?accion=cambiar_publicacion&id=${id}&estado=${nuevoEstado}`, { 
+            method: "POST", 
+            mode: "no-cors" 
+        });
+
+        Toast.fire({
+            icon: 'success',
+            title: nuevoEstado === 'SI' ? 'Visible en la web 🌐' : 'Oculto de la web 🚫'
+        });
+
+        // Actualizamos nuestro arreglo local para que no haya que recargar la página entera
+        const vestido = datosGlobales.inventario.find(v => v['ID_Articulo'] === id);
+        if(vestido) vestido['Publicado'] = nuevoEstado;
+
+    } catch (error) {
+        console.error("Error al actualizar visibilidad:", error);
+        Swal.fire('Error', 'No se pudo actualizar en la nube. Revisa tu conexión.', 'error');
+        // Revertir el switch si hubo error
+        document.getElementById('toggle-publicado').checked = !estaActivado;
+    }
 }
 // --- FUNCIÓN PARA EL CALENDARIO DE PUNTOS (CON CLIC A DETALLE) ---
 function renderizarCalendario() {
